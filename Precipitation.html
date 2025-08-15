@@ -509,7 +509,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#" onclick="alert('UV Level feature coming soon!')">UV Level</a></li>
+                            <li><a class="dropdown-item" href="uvlevel.html">UV Level</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1100,11 +1100,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             createRaindrops();
             createPrecipitationChart();
-            getPrecipitationData(); // Load initial data
             updateTimeline(); // Initialize timeline
-            
-            // Auto-refresh data every 5 minutes
-            setInterval(getPrecipitationData, 300000);
             
             // Update timeline every minute
             setInterval(updateTimeline, 60000);
