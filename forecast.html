@@ -500,13 +500,7 @@
                             <p>${wind.speed} m/s</p>
                         </div>
                         
-                        <div class="weather-info">
-                            <div class="weather-icon">
-                                <i class="bi bi-speedometer2"></i>
-                            </div>
-                            <h3>Pressure</h3>
-                            <p>${main.pressure} hPa</p>
-                        </div>
+                        
                     </div>
                 </div>
             `;
@@ -518,9 +512,9 @@
             forecastContainer.className = 'weather-card';
             
             // Get daily forecasts (every 24 hours)
-            const dailyForecasts = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
+            const dailyForecasts = data.list.filter((item, index) => index % 8 === 0).slice(0, 4);
             
-            let forecastHTML = '<h3 class="text-center mb-3">5-Day Forecast</h3><div class="forecast-container">';
+            let forecastHTML = '<h3 class="text-center mb-3">4 Day Forecast</h3><div class="forecast-container">';
             
             dailyForecasts.forEach(forecast => {
                 const date = new Date(forecast.dt * 1000);
