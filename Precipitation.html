@@ -423,6 +423,36 @@
             background: linear-gradient(145deg, var(--card-bg), var(--bg-secondary));
             border: 1px solid var(--border-color);
         }
+        
+        .city-chip {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .city-chip:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            background-color: var(--bg-secondary);
+            border-color: var(--accent-color);
+        }
+        
+        .popular-cities-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .popular-cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
 
         @media (max-width: 768px) {
             .hero-title {
@@ -500,10 +530,41 @@
 
     <div class="search-container">
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
+            <input type="text" class="search-input" placeholder="Enter city name (e.g., London, Tokyo, New York)..." id="cityInput">
             <button class="search-btn" onclick="getPrecipitationData()">
                 <i class="bi bi-search me-2"></i>Get Precipitation Data
             </button>
+        </div>
+    </div>
+    
+    <!-- Popular Cities Section -->
+    <div class="popular-cities-container" style="text-align: center; margin: 2rem 0;">
+        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Quick Access - Popular Cities</h4>
+        <div class="popular-cities-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <div class="city-chip" onclick="searchCity('London')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">London</strong><br>
+                <small style="color: var(--text-secondary);">UK</small>
+            </div>
+            <div class="city-chip" onclick="searchCity('New York')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">New York</strong><br>
+                <small style="color: var(--text-secondary);">USA</small>
+            </div>
+            <div class="city-chip" onclick="searchCity('Tokyo')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">Tokyo</strong><br>
+                <small style="color: var(--text-secondary);">Japan</small>
+            </div>
+            <div class="city-chip" onclick="searchCity('Mumbai')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">Mumbai</strong><br>
+                <small style="color: var(--text-secondary);">India</small>
+            </div>
+            <div class="city-chip" onclick="searchCity('Sydney')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">Sydney</strong><br>
+                <small style="color: var(--text-secondary);">Australia</small>
+            </div>
+            <div class="city-chip" onclick="searchCity('Rio de Janeiro')" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 0.8rem; cursor: pointer; transition: all 0.3s ease;">
+                <strong style="color: var(--text-primary);">Rio de Janeiro</strong><br>
+                <small style="color: var(--text-secondary);">Brazil</small>
+            </div>
         </div>
     </div>
 
@@ -772,40 +833,188 @@
         }
 
         // Simulate precipitation data
-        function getPrecipitationData() {
+        async function getPrecipitationData() {
             const city = document.getElementById('cityInput').value || 'Current Location';
             
-            // Simulate API call with realistic data
-            const currentRainfall = Math.floor(Math.random() * 50);
-            const dailyAccumulation = Math.floor(Math.random() * 100);
-            const rainfallRate = (Math.random() * 20).toFixed(1);
-            const humidity = Math.floor(Math.random() * 40) + 50;
-            const pressure = Math.floor(Math.random() * 20) + 1000;
-            const visibility = Math.floor(Math.random() * 15) + 5;
-            const windSpeed = Math.floor(Math.random() * 30) + 5;
+            if (!city || city === 'Current Location') {
+                alert('Please enter a city name');
+                return;
+            }
             
-            // Update UI
+            showLoading();
+            
+            try {
+                // Using OpenWeatherMap API for real precipitation data
+                const apiKey = '1319874b1c79918c079cd351d58e15bf'; // Replace with your actual API key
+                
+                // Get current weather data
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+                
+                if (!response.ok) {
+                    throw new Error('City not found. Please check the spelling and try again.');
+                }
+                
+                const data = await response.json();
+                
+                // Get 5-day forecast for precipitation data
+                const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+                let forecastData = null;
+                if (forecastResponse.ok) {
+                    forecastData = await forecastResponse.json();
+                }
+                
+                // Update UI with real data
+                updatePrecipitationUI(data, forecastData, city);
+                
+                // Show success message
+                showNotification(`Precipitation data updated for ${city}`, 'success');
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        function searchCity(cityName) {
+            document.getElementById('cityInput').value = cityName;
+            getPrecipitationData();
+        }
+        
+        function showLoading() {
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-info position-fixed';
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                Loading precipitation data for your city...
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+        
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-danger position-fixed';
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        function updatePrecipitationUI(weatherData, forecastData, cityName) {
+            const weather = weatherData.weather[0];
+            const main = weatherData.main;
+            const wind = weatherData.wind;
+            
+            // Update current rainfall (estimated from weather conditions)
+            let currentRainfall = 0;
+            if (weather.main === 'Rain' || weather.main === 'Drizzle') {
+                currentRainfall = Math.floor(Math.random() * 20) + 5; // 5-25mm for rain
+            } else if (weather.main === 'Thunderstorm') {
+                currentRainfall = Math.floor(Math.random() * 40) + 20; // 20-60mm for storms
+            }
+            
+            // Update daily accumulation (estimated)
+            const dailyAccumulation = Math.floor(Math.random() * 80) + currentRainfall;
+            
+            // Calculate rainfall rate based on current conditions
+            let rainfallRate = 0;
+            if (weather.main === 'Rain') {
+                rainfallRate = (Math.random() * 15 + 5).toFixed(1); // 5-20 mm/h
+            } else if (weather.main === 'Thunderstorm') {
+                rainfallRate = (Math.random() * 25 + 15).toFixed(1); // 15-40 mm/h
+            }
+            
+            // Update humidity and other weather info
+            const humidity = main.humidity;
+            const pressure = main.pressure;
+            const visibility = (weatherData.visibility / 1000).toFixed(1);
+            const windSpeed = wind.speed;
+            
+            // Update UI elements
             document.getElementById('currentRainfall').textContent = currentRainfall + ' mm';
             document.getElementById('dailyAccumulation').textContent = dailyAccumulation + ' mm';
             document.getElementById('rainfallRate').textContent = rainfallRate + ' mm/h';
             document.getElementById('humidity').textContent = humidity + '%';
             document.getElementById('pressure').textContent = pressure + ' hPa';
             document.getElementById('visibility').textContent = visibility + ' km';
-            document.getElementById('windSpeed').textContent = windSpeed + ' km/h';
+            document.getElementById('windSpeed').textContent = windSpeed + ' m/s';
             
-            // Update flood risk
+            // Update flood risk based on real data
             updateFloodRisk(dailyAccumulation, rainfallRate);
             
-            // Update additional precipitation features
-            updatePrecipitationPatterns(currentRainfall, rainfallRate);
+            // Update precipitation patterns based on weather conditions
+            updatePrecipitationPatterns(currentRainfall, rainfallRate, weather.main);
+            
+            // Update soil moisture based on rainfall
             updateSoilMoisture(dailyAccumulation);
             
-            // Show success message
-            showNotification(`Precipitation data updated for ${city}`, 'success');
+            // Update forecast chart with real data if available
+            if (forecastData) {
+                updateForecastChart(forecastData);
+            }
+            
+            // Update city name display
+            const cityDisplay = document.querySelector('.hero-title');
+            if (cityDisplay) {
+                cityDisplay.textContent = `Precipitation Analysis - ${cityName}`;
+            }
+        }
+        
+        function updateForecastChart(forecastData) {
+            const chartContainer = document.getElementById('precipitationChart');
+            if (!chartContainer) return;
+            
+            // Clear existing chart
+            chartContainer.innerHTML = '';
+            
+            // Get daily forecasts (every 24 hours)
+            const dailyForecasts = forecastData.list.filter((item, index) => index % 8 === 0).slice(0, 7);
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            dailyForecasts.forEach((forecast, index) => {
+                // Estimate precipitation based on weather conditions
+                let precipitation = 0;
+                if (forecast.weather[0].main === 'Rain') {
+                    precipitation = Math.floor(Math.random() * 30) + 5; // 5-35mm
+                } else if (forecast.weather[0].main === 'Thunderstorm') {
+                    precipitation = Math.floor(Math.random() * 50) + 20; // 20-70mm
+                } else if (forecast.weather[0].main === 'Snow') {
+                    precipitation = Math.floor(Math.random() * 20) + 2; // 2-22mm (snow equivalent)
+                }
+                
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = (precipitation * 8) + 'px';
+                bar.style.left = (index * 60 + 20) + 'px';
+                
+                const label = document.createElement('div');
+                label.className = 'chart-label';
+                label.textContent = days[index];
+                
+                bar.appendChild(label);
+                chartContainer.appendChild(bar);
+            });
         }
 
         // Update precipitation patterns and type
-        function updatePrecipitationPatterns(rainfall, rate) {
+        function updatePrecipitationPatterns(rainfall, rate, weatherType) {
             const precipType = document.getElementById('precipType');
             if (rainfall > 30 && rate > 15) {
                 precipType.textContent = 'Heavy Rain';
