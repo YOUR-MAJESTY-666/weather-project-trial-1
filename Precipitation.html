@@ -372,6 +372,25 @@
             font-weight: bold;
             color: var(--accent-color);
             margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .info-value.updating {
+            animation: pulse 1s ease-in-out;
+        }
+        
+        .info-value.updated {
+            animation: highlight 1s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes highlight {
+            0% { background-color: rgba(32, 178, 170, 0.2); }
+            100% { background-color: transparent; }
         }
 
         .info-label {
@@ -860,8 +879,8 @@
                 // Update UI with real data
                 updatePrecipitationUI(data, forecastData, city);
                 
-                // Show success message
-                showNotification(`Precipitation data updated for ${city}`, 'success');
+                // Show detailed precipitation information
+                showPrecipitationDetails(data, city);
                 
             } catch (error) {
                 showError(error.message);
@@ -874,41 +893,19 @@
         }
         
         function showLoading() {
-            const notification = document.createElement('div');
-            notification.className = 'alert alert-info position-fixed';
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
-            notification.innerHTML = `
-                <i class="bi bi-arrow-clockwise me-2"></i>
-                Loading precipitation data for your city...
-                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
+            // Add loading indicator to precipitation cards
+            const loadingElements = ['currentRainfall', 'dailyAccumulation', 'rainfallRate', 'floodRisk'];
+            loadingElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('updating');
+                    element.textContent = 'Loading...';
                 }
-            }, 3000);
+            });
         }
         
         function showError(message) {
-            const notification = document.createElement('div');
-            notification.className = 'alert alert-danger position-fixed';
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
-            notification.innerHTML = `
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
+            alert(message);
         }
         
         function updatePrecipitationUI(weatherData, forecastData, cityName) {
@@ -941,14 +938,14 @@
             const visibility = (weatherData.visibility / 1000).toFixed(1);
             const windSpeed = wind.speed;
             
-            // Update UI elements
-            document.getElementById('currentRainfall').textContent = currentRainfall + ' mm';
-            document.getElementById('dailyAccumulation').textContent = dailyAccumulation + ' mm';
-            document.getElementById('rainfallRate').textContent = rainfallRate + ' mm/h';
-            document.getElementById('humidity').textContent = humidity + '%';
-            document.getElementById('pressure').textContent = pressure + ' hPa';
-            document.getElementById('visibility').textContent = visibility + ' km';
-            document.getElementById('windSpeed').textContent = windSpeed + ' m/s';
+            // Update UI elements with animation
+            animateValueUpdate('currentRainfall', currentRainfall + ' mm');
+            animateValueUpdate('dailyAccumulation', dailyAccumulation + ' mm');
+            animateValueUpdate('rainfallRate', rainfallRate + ' mm/h');
+            animateValueUpdate('humidity', humidity + '%');
+            animateValueUpdate('pressure', pressure + ' hPa');
+            animateValueUpdate('visibility', visibility + ' km');
+            animateValueUpdate('windSpeed', windSpeed + ' m/s');
             
             // Update flood risk based on real data
             updateFloodRisk(dailyAccumulation, rainfallRate);
@@ -969,6 +966,27 @@
             if (cityDisplay) {
                 cityDisplay.textContent = `Precipitation Analysis - ${cityName}`;
             }
+        }
+        
+        // Function to animate value updates in sync with notifications
+        function animateValueUpdate(elementId, newValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            // Add updating animation class
+            element.classList.add('updating');
+            
+            // Update value after a short delay to sync with notification
+            setTimeout(() => {
+                element.textContent = newValue;
+                element.classList.remove('updating');
+                element.classList.add('updated');
+                
+                // Remove updated class after animation
+                setTimeout(() => {
+                    element.classList.remove('updated');
+                }, 1000);
+            }, 500);
         }
         
         function updateForecastChart(forecastData) {
@@ -1076,24 +1094,37 @@
             document.getElementById('riskLevel').style.background = riskColor;
         }
 
-        // Show notification
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type} position-fixed`;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
-            notification.innerHTML = `
-                <i class="bi bi-check-circle me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-            `;
+        // Show detailed precipitation information
+        function showPrecipitationDetails(weatherData, cityName) {
+            const weather = weatherData.weather[0];
+            const main = weatherData.main;
             
-            document.body.appendChild(notification);
+            // Create detailed precipitation summary
+            let precipitationType = 'No precipitation';
+            let intensity = 'None';
             
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
+            if (weather.main === 'Rain' || weather.main === 'Drizzle') {
+                precipitationType = 'Rain';
+                intensity = weather.main === 'Rain' ? 'Moderate' : 'Light';
+            } else if (weather.main === 'Thunderstorm') {
+                precipitationType = 'Thunderstorm';
+                intensity = 'Heavy';
+            } else if (weather.main === 'Snow') {
+                precipitationType = 'Snow';
+                intensity = 'Moderate';
+            }
+            
+            // Update the precipitation type display on the page
+            const precipTypeElement = document.getElementById('precipType');
+            if (precipTypeElement) {
+                precipTypeElement.textContent = `${precipitationType} (${intensity})`;
+            }
+            
+            // Update the hero title to show current conditions
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle) {
+                heroTitle.textContent = `Precipitation Analysis - ${cityName}`;
+            }
         }
 
         // Initialize page
