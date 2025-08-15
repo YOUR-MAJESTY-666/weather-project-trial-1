@@ -299,9 +299,16 @@
         <!-- Weather content will be displayed here -->
     </div>
 
+
+
+
+<!-- //bootstrap link -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
+
+
+
     <script>
 		// Theme management
 		let currentTheme = localStorage.getItem('theme') || 'light';
@@ -329,6 +336,25 @@
 		// Initialize theme
 		document.documentElement.setAttribute('data-theme', currentTheme);
 		updateThemeButton();
+
+
+
+     
+
+        //the api thingy
+    //     const city = "Bangalore";
+    // const apiKey = "832f3ff1e5c0f4508b106971b436d0e7"; // paste your key here
+
+    // fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     document.getElementById("temp").textContent =
+    //       `Temperature in ${city}: ${data.main.temp}°C`;
+    //   })
+    //   .catch(error => {
+    //     document.getElementById("temp").textContent = "Error loading temperature.";
+    //     console.error(error);
+    //   });
 	</script>
 </body>
 </html>
