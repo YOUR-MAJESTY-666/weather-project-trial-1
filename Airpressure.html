@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Humidity Forecast</title>
+    <title>Air Pressure Forecast</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.x.x/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -79,12 +79,12 @@
             transform: scale(1.05);
         }
 
-        [data-theme="dark"] .humidity-card {
+        [data-theme="dark"] .pressure-card {
             background: linear-gradient(145deg, var(--card-bg), var(--bg-secondary));
             border: 1px solid var(--border-color);
         }
 
-        [data-theme="dark"] .humidity-info {
+        [data-theme="dark"] .pressure-info {
             background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
             border: 1px solid var(--border-color);
         }
@@ -144,13 +144,13 @@
             box-shadow: 0 4px 15px rgba(32, 178, 170, 0.4);
         }
 
-        .humidity-container {
+        .pressure-container {
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
 
-        .humidity-card {
+        .pressure-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 15px;
@@ -160,7 +160,7 @@
             transition: all 0.3s ease;
         }
 
-        .humidity-card:hover {
+        .pressure-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
@@ -182,19 +182,19 @@
             font-size: 1rem;
         }
 
-        .humidity-display {
+        .pressure-display {
             text-align: center;
             margin: 20px 0;
         }
 
-        .humidity-number {
+        .pressure-number {
             font-size: 4rem;
             font-weight: bold;
             margin: 0;
             color: var(--accent-color);
         }
 
-        .humidity-label {
+        .pressure-label {
             font-size: 1.1rem;
             margin: 10px 0;
             padding: 6px 16px;
@@ -202,10 +202,10 @@
             display: inline-block;
         }
 
-        .humidity-low { background: #4CAF50; color: white; }
-        .humidity-moderate { background: #FF9800; color: white; }
-        .humidity-high { background: #2196F3; color: white; }
-        .humidity-very-high { background: #9C27B0; color: white; }
+        .pressure-low { background: #4CAF50; color: white; }
+        .pressure-normal { background: #2196F3; color: white; }
+        .pressure-high { background: #FF9800; color: white; }
+        .pressure-very-high { background: #f44336; color: white; }
 
         .metrics-grid {
             display: grid;
@@ -267,7 +267,7 @@
             color: var(--text-primary);
         }
 
-        .forecast-humidity {
+        .forecast-pressure {
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--accent-color);
@@ -350,13 +350,13 @@
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link temperature" aria-current="page" href="Temperature.html">Temperature</a>
+                        <a class="nav-link" aria-current="page" href="Temperature.html">Temperature</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link precipitation" aria-current="page" href="Precipitation.html">Precipitation</a>
+                        <a class="nav-link" aria-current="page" href="Precipitation.html">Precipitation</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link air_quality" aria-current="page" href="Air_quality.html">Air Quality</a>
+                        <a class="nav-link" aria-current="page" href="Air_quality.html">Air Quality</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
@@ -364,9 +364,9 @@
                             More Forecasts
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item active" href="humidity.html">Humidity</a></li>
+                            <li><a class="dropdown-item" href="humidity.html">Humidity</a></li>
                             <li><a class="dropdown-item" href="#">Pollution Level</a></li>
-                            <li><a class="dropdown-item" href="Airpressure.html">Air Pressure</a></li>
+                            <li><a class="dropdown-item active" href="Airpressure.html">Air Pressure</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -385,18 +385,18 @@
 
     <div class="container">
         <div class="text-center mt-4">
-            <h2>Check Humidity Forecast</h2>
-            <p class="text-muted">Enter a city name to get real-time humidity information and forecast</p>
+            <h2>Check Air Pressure Forecast</h2>
+            <p class="text-muted">Enter a city name to get real-time air pressure information and forecast</p>
         </div>
         <div class="search-box">
             <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
-            <button class="search-btn" onclick="getHumidity()">
-                <i class="bi bi-droplet-fill me-2"></i>Get Humidity
+            <button class="search-btn" onclick="getAirPressure()">
+                <i class="bi bi-speedometer2 me-2"></i>Get Air Pressure
             </button>
         </div>
 
-        <div class="humidity-container" id="humidityContainer">
-            <!-- Humidity content will be displayed here -->
+        <div class="pressure-container" id="pressureContainer">
+            <!-- Air pressure content will be displayed here -->
         </div>
     </div>
 
@@ -436,7 +436,7 @@
         const API_KEY = '1319874b1c79918c079cd351d58e15bf'; // Replace with your actual API key
         const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-        async function getHumidity() {
+        async function getAirPressure() {
             const cityInput = document.getElementById('cityInput');
             const city = cityInput.value.trim();
             
@@ -456,13 +456,13 @@
                 }
                 
                 const data = await response.json();
-                displayHumidity(data);
+                displayAirPressure(data);
                 
-                // Get 5-day forecast for humidity
+                // Get 5-day forecast for air pressure
                 const forecastResponse = await fetch(`${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=metric`);
                 if (forecastResponse.ok) {
                     const forecastData = await forecastResponse.json();
-                    displayHumidityForecast(forecastData);
+                    displayAirPressureForecast(forecastData);
                 }
                 
             } catch (error) {
@@ -470,24 +470,24 @@
             }
         }
 
-        function displayHumidity(data) {
-            const container = document.getElementById('humidityContainer');
+        function displayAirPressure(data) {
+            const container = document.getElementById('pressureContainer');
             const main = data.main;
             const weather = data.weather[0];
-            const humidity = main.humidity;
-            const humidityInfo = getHumidityInfo(humidity);
+            const pressure = main.pressure;
+            const pressureInfo = getPressureInfo(pressure);
             
             container.innerHTML = `
-                <div class="humidity-card">
+                <div class="pressure-card">
                     <div class="city-info">
                         <div class="city-name">${data.name}, ${data.sys.country}</div>
-                        <div class="city-country">Current Humidity Level</div>
+                        <div class="city-country">Current Air Pressure Level</div>
                     </div>
                     
-                    <div class="humidity-display">
-                        <div class="humidity-number">${humidity}%</div>
-                        <span class="humidity-label ${humidityInfo.class}">${humidityInfo.label}</span>
-                        <p class="mt-3">${humidityInfo.description}</p>
+                    <div class="pressure-display">
+                        <div class="pressure-number">${pressure} hPa</div>
+                        <span class="pressure-label ${pressureInfo.class}">${pressureInfo.label}</span>
+                        <p class="mt-3">${pressureInfo.description}</p>
                     </div>
                     
                     <div class="metrics-grid">
@@ -500,8 +500,8 @@
                             <div class="metric-label">Feels Like</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${main.pressure} hPa</div>
-                            <div class="metric-label">Pressure</div>
+                            <div class="metric-value">${main.humidity}%</div>
+                            <div class="metric-label">Humidity</div>
                         </div>
                         <div class="metric-card">
                             <div class="metric-value">${data.wind.speed} m/s</div>
@@ -520,29 +520,29 @@
             `;
         }
 
-        function displayHumidityForecast(data) {
-            const container = document.getElementById('humidityContainer');
+        function displayAirPressureForecast(data) {
+            const container = document.getElementById('pressureContainer');
             const forecastContainer = document.createElement('div');
-            forecastContainer.className = 'humidity-card';
+            forecastContainer.className = 'pressure-card';
             
             // Get daily forecasts (every 24 hours)
             const dailyForecasts = data.list.filter((item, index) => index % 8 === 0).slice(0, 4);
             
-            let forecastHTML = '<h3 class="text-center mb-3">4 Day Humidity Forecast</h3><div class="forecast-container">';
+            let forecastHTML = '<h3 class="text-center mb-3">4 Day Air Pressure Forecast</h3><div class="forecast-container">';
             
             dailyForecasts.forEach(forecast => {
                 const date = new Date(forecast.dt * 1000);
                 const day = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const humidity = forecast.main.humidity;
+                const pressure = forecast.main.pressure;
                 const temp = Math.round(forecast.main.temp);
                 const description = forecast.weather[0].description;
-                const humidityInfo = getHumidityInfo(humidity);
+                const pressureInfo = getPressureInfo(pressure);
                 
                 forecastHTML += `
                     <div class="forecast-item">
                         <div class="forecast-date">${day}</div>
-                        <div class="forecast-humidity">${humidity}%</div>
-                        <div class="forecast-desc">${humidityInfo.label}</div>
+                        <div class="forecast-pressure">${pressure} hPa</div>
+                        <div class="forecast-desc">${pressureInfo.label}</div>
                         <div class="forecast-desc">${temp}°C</div>
                         <div class="forecast-desc">${description}</div>
                     </div>
@@ -554,46 +554,52 @@
             container.appendChild(forecastContainer);
         }
 
-        function getHumidityInfo(humidity) {
-            if (humidity < 30) {
+        function getPressureInfo(pressure) {
+            if (pressure < 1000) {
                 return { 
                     label: 'Low', 
-                    class: 'humidity-low', 
-                    description: 'Low humidity can cause dry skin and respiratory discomfort.' 
+                    class: 'pressure-low', 
+                    description: 'Low pressure often indicates stormy weather conditions.' 
                 };
-            } else if (humidity < 50) {
+            } else if (pressure < 1013) {
                 return { 
-                    label: 'Moderate', 
-                    class: 'humidity-moderate', 
-                    description: 'Comfortable humidity level for most people.' 
+                    label: 'Below Normal', 
+                    class: 'pressure-low', 
+                    description: 'Below normal pressure may indicate unsettled weather.' 
                 };
-            } else if (humidity < 70) {
+            } else if (pressure < 1020) {
+                return { 
+                    label: 'Normal', 
+                    class: 'pressure-normal', 
+                    description: 'Normal atmospheric pressure for most weather conditions.' 
+                };
+            } else if (pressure < 1030) {
                 return { 
                     label: 'High', 
-                    class: 'humidity-high', 
-                    description: 'High humidity may feel muggy and uncomfortable.' 
+                    class: 'pressure-high', 
+                    description: 'High pressure usually brings clear, stable weather.' 
                 };
             } else {
                 return { 
                     label: 'Very High', 
-                    class: 'humidity-very-high', 
-                    description: 'Very high humidity can be oppressive and uncomfortable.' 
+                    class: 'pressure-very-high', 
+                    description: 'Very high pressure indicates very stable, clear weather.' 
                 };
             }
         }
 
         function showLoading() {
-            const container = document.getElementById('humidityContainer');
+            const container = document.getElementById('pressureContainer');
             container.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Loading humidity data...</p>
+                    <p>Loading air pressure data...</p>
                 </div>
             `;
         }
 
         function showError(message) {
-            const container = document.getElementById('humidityContainer');
+            const container = document.getElementById('pressureContainer');
             container.innerHTML = `
                 <div class="error-message">
                     <i class="bi bi-exclamation-triangle me-2"></i>
@@ -605,69 +611,9 @@
         // Allow Enter key to search
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                getHumidity();
+                getAirPressure();
             }
         });
-
-        // Demo mode for testing (remove this when you have an API key)
-        function enableDemoMode() {
-            const container = document.getElementById('humidityContainer');
-            container.innerHTML = `
-                <div class="humidity-card">
-                    <div class="city-info">
-                        <div class="city-name">Demo Mode</div>
-                        <div class="city-country">Sample Humidity Data</div>
-                    </div>
-                    
-                    <div class="humidity-display">
-                        <div class="humidity-number">65%</div>
-                        <span class="humidity-label humidity-high">High</span>
-                        <p class="mt-3">High humidity may feel muggy and uncomfortable.</p>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value">22°C</div>
-                            <div class="metric-label">Temperature</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">25°C</div>
-                            <div class="metric-label">Feels Like</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">1013 hPa</div>
-                            <div class="metric-label">Pressure</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">3.2 m/s</div>
-                            <div class="metric-label">Wind Speed</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">Cloudy</div>
-                            <div class="metric-label">Weather</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">10 km</div>
-                            <div class="metric-label">Visibility</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mt-4">
-                        <div class="alert alert-info">
-                            <strong>Note:</strong> This is demo data. To get real humidity data, 
-                            <a href="https://openweathermap.org/api" target="_blank">get an API key</a> and replace 'YOUR_API_KEY_HERE' in the code.
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Show demo mode on page load (remove this when you have an API key)
-        window.onload = function() {
-            if (API_KEY === 'YOUR_API_KEY_HERE') {
-                enableDemoMode();
-            }
-        };
     </script>
 </body>
 </html>
