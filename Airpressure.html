@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Weather Forecast</title>
+    <title>Air Pressure Forecast</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.x.x/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -79,12 +79,12 @@
             transform: scale(1.05);
         }
 
-        [data-theme="dark"] .weather-card {
+        [data-theme="dark"] .pressure-card {
             background: linear-gradient(145deg, var(--card-bg), var(--bg-secondary));
             border: 1px solid var(--border-color);
         }
 
-        [data-theme="dark"] .weather-info {
+        [data-theme="dark"] .pressure-info {
             background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
             border: 1px solid var(--border-color);
         }
@@ -144,13 +144,13 @@
             box-shadow: 0 4px 15px rgba(32, 178, 170, 0.4);
         }
 
-        .weather-container {
+        .pressure-container {
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
 
-        .weather-card {
+        .pressure-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 15px;
@@ -160,60 +160,84 @@
             transition: all 0.3s ease;
         }
 
-        .weather-card:hover {
+        .pressure-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
-        .weather-header {
+        .city-info {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .city-name {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .weather-description {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            text-transform: capitalize;
-        }
-
-        .weather-main {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .weather-info {
-            text-align: center;
-            padding: 1rem;
-            background-color: var(--bg-secondary);
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .weather-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--text-primary);
         }
 
-        .weather-info p {
-            font-size: 2rem;
+        .city-country {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .pressure-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pressure-number {
+            font-size: 4rem;
             font-weight: bold;
             margin: 0;
             color: var(--accent-color);
         }
 
-        .weather-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+        .pressure-label {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            padding: 6px 16px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        .pressure-low { background: #4CAF50; color: white; }
+        .pressure-normal { background: #2196F3; color: white; }
+        .pressure-high { background: #FF9800; color: white; }
+        .pressure-very-high { background: #f44336; color: white; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
             color: var(--accent-color);
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         .forecast-container {
@@ -243,7 +267,7 @@
             color: var(--text-primary);
         }
 
-        .forecast-temp {
+        .forecast-pressure {
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--accent-color);
@@ -255,6 +279,12 @@
             font-size: 0.9rem;
         }
 
+        .loading {
+            text-align: center;
+            margin: 2rem auto;
+            color: var(--text-secondary);
+        }
+
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
@@ -264,12 +294,6 @@
             margin: 2rem auto;
             max-width: 500px;
             text-align: center;
-        }
-
-        .loading {
-            text-align: center;
-            margin: 2rem auto;
-            color: var(--text-secondary);
         }
 
         .spinner {
@@ -298,7 +322,7 @@
                 border-radius: 30px;
             }
             
-            .weather-main {
+            .metrics-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -322,37 +346,31 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" aria-current="page" href="bigmain.html">Home</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="Temperature.html">Temperature</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link sign-in" aria-current="page" href="#">Sign in</a>
+                        <a class="nav-link" aria-current="page" href="Precipitation.html">Precipitation</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link guide" aria-current="page" href="#">Guide</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link temperature" aria-current="page" href="Temperature.html">Temperature</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link precipitation" aria-current="page" href="Precipitation.html">Precipitation</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link air_quality" aria-current="page" href="Air_quality.html">Air Quality</a>
+                        <a class="nav-link" aria-current="page" href="Air_quality.html">Air Quality</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             More Forecasts
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Humidity</a></li>
+                            <li><a class="dropdown-item" href="humidity.html">Humidity</a></li>
                             <li><a class="dropdown-item" href="#">Pollution Level</a></li>
-                            <li><a class="dropdown-item" href="#">Air Quality</a></li>
-                            <li><a class="dropdown-item" href="#">Air Pressure</a></li>
+                            <li><a class="dropdown-item active" href="Airpressure.html">Air Pressure</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" href="#">UV Level </a></li>
                         </ul>
                     </li>
                 </ul>
@@ -365,13 +383,21 @@
         </div>
     </nav>
 
-    <div class="search-box">
-        <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
-        <button class="search-btn" onclick="getWeather()">Get Weather</button>
-    </div>
+    <div class="container">
+        <div class="text-center mt-4">
+            <h2>Check Air Pressure Forecast</h2>
+            <p class="text-muted">Enter a city name to get real-time air pressure information and forecast</p>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
+            <button class="search-btn" onclick="getAirPressure()">
+                <i class="bi bi-speedometer2 me-2"></i>Get Air Pressure
+            </button>
+        </div>
 
-    <div class="weather-container" id="weatherContainer">
-        <!-- Weather content will be displayed here -->
+        <div class="pressure-container" id="pressureContainer">
+            <!-- Air pressure content will be displayed here -->
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
@@ -379,7 +405,7 @@
         crossorigin="anonymous"></script>
     
     <script>
-        // Theme management
+        // Theme management (aligned with bigmain.html)
         let currentTheme = localStorage.getItem('theme') || 'light';
         
         function toggleTheme() {
@@ -405,127 +431,119 @@
         // Initialize theme
         document.documentElement.setAttribute('data-theme', currentTheme);
         updateThemeButton();
-        
-        // Weather functionality
-        async function getWeather() {
+
+        // Weather API configuration
+        const API_KEY = '1319874b1c79918c079cd351d58e15bf'; // Replace with your actual API key
+        const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+
+        async function getAirPressure() {
             const cityInput = document.getElementById('cityInput');
             const city = cityInput.value.trim();
             
             if (!city) {
-                alert('Please enter a city name');
+                showError('Please enter a city name');
                 return;
             }
             
             showLoading();
             
             try {
-                // Using OpenWeatherMap API (you'll need to get an API key)
-                const apiKey = '1319874b1c79918c079cd351d58e15bf'; // Replace with your actual API key
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+                // Get current weather data
+                const response = await fetch(`${BASE_URL}/weather?q=${city}&appid=${API_KEY}&units=metric`);
                 
                 if (!response.ok) {
                     throw new Error('City not found');
                 }
                 
                 const data = await response.json();
-                displayWeather(data);
+                displayAirPressure(data);
                 
-                // Get 5-day forecast
-                const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+                // Get 5-day forecast for air pressure
+                const forecastResponse = await fetch(`${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=metric`);
                 if (forecastResponse.ok) {
                     const forecastData = await forecastResponse.json();
-                    displayForecast(forecastData);
+                    displayAirPressureForecast(forecastData);
                 }
                 
             } catch (error) {
                 showError(error.message);
             }
         }
-        
-        function showLoading() {
-            const container = document.getElementById('weatherContainer');
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Loading weather data...</p>
-                </div>
-            `;
-        }
-        
-        function showError(message) {
-            const container = document.getElementById('weatherContainer');
-            container.innerHTML = `
-                <div class="error-message">
-                    <h3>Error</h3>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-        
-        function displayWeather(data) {
-            const container = document.getElementById('weatherContainer');
-            const weather = data.weather[0];
+
+        function displayAirPressure(data) {
+            const container = document.getElementById('pressureContainer');
             const main = data.main;
-            const wind = data.wind;
+            const weather = data.weather[0];
+            const pressure = main.pressure;
+            const pressureInfo = getPressureInfo(pressure);
             
             container.innerHTML = `
-                <div class="weather-card">
-                    <div class="weather-header">
+                <div class="pressure-card">
+                    <div class="city-info">
                         <div class="city-name">${data.name}, ${data.sys.country}</div>
-                        <div class="weather-description">${weather.description}</div>
+                        <div class="city-country">Current Air Pressure Level</div>
                     </div>
                     
-                    <div class="weather-main">
-                        <div class="weather-info">
-                            <div class="weather-icon">
-                                <i class="bi bi-thermometer-half"></i>
-                            </div>
-                            <h3>Temperature</h3>
-                            <p>${Math.round(main.temp)}°C</p>
+                    <div class="pressure-display">
+                        <div class="pressure-number">${pressure} hPa</div>
+                        <span class="pressure-label ${pressureInfo.class}">${pressureInfo.label}</span>
+                        <p class="mt-3">${pressureInfo.description}</p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">${Math.round(main.temp)}°C</div>
+                            <div class="metric-label">Temperature</div>
                         </div>
-                        
-                        <div class="weather-info">
-                            <div class="weather-icon">
-                                <i class="bi bi-droplet-fill"></i>
-                            </div>
-                            <h3>Humidity</h3>
-                            <p>${main.humidity}%</p>
+                        <div class="metric-card">
+                            <div class="metric-value">${Math.round(main.feels_like)}°C</div>
+                            <div class="metric-label">Feels Like</div>
                         </div>
-                        
-                        <div class="weather-info">
-                            <div class="weather-icon">
-                                <i class="bi bi-wind"></i>
-                            </div>
-                            <h3>Wind Speed</h3>
-                            <p>${wind.speed} m/s</p>
+                        <div class="metric-card">
+                            <div class="metric-value">${main.humidity}%</div>
+                            <div class="metric-label">Humidity</div>
                         </div>
-                        
-                        
+                        <div class="metric-card">
+                            <div class="metric-value">${data.wind.speed} m/s</div>
+                            <div class="metric-label">Wind Speed</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${weather.description}</div>
+                            <div class="metric-label">Weather</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${data.visibility / 1000} km</div>
+                            <div class="metric-label">Visibility</div>
+                        </div>
                     </div>
                 </div>
             `;
         }
-        
-        function displayForecast(data) {
-            const container = document.getElementById('weatherContainer');
+
+        function displayAirPressureForecast(data) {
+            const container = document.getElementById('pressureContainer');
             const forecastContainer = document.createElement('div');
-            forecastContainer.className = 'weather-card';
+            forecastContainer.className = 'pressure-card';
             
             // Get daily forecasts (every 24 hours)
             const dailyForecasts = data.list.filter((item, index) => index % 8 === 0).slice(0, 4);
             
-            let forecastHTML = '<h3 class="text-center mb-3">4 Day Forecast</h3><div class="forecast-container">';
+            let forecastHTML = '<h3 class="text-center mb-3">4 Day Air Pressure Forecast</h3><div class="forecast-container">';
             
             dailyForecasts.forEach(forecast => {
                 const date = new Date(forecast.dt * 1000);
                 const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const pressure = forecast.main.pressure;
                 const temp = Math.round(forecast.main.temp);
                 const description = forecast.weather[0].description;
+                const pressureInfo = getPressureInfo(pressure);
                 
                 forecastHTML += `
                     <div class="forecast-item">
                         <div class="forecast-date">${day}</div>
-                        <div class="forecast-temp">${temp}°C</div>
+                        <div class="forecast-pressure">${pressure} hPa</div>
+                        <div class="forecast-desc">${pressureInfo.label}</div>
+                        <div class="forecast-desc">${temp}°C</div>
                         <div class="forecast-desc">${description}</div>
                     </div>
                 `;
@@ -535,11 +553,65 @@
             forecastContainer.innerHTML = forecastHTML;
             container.appendChild(forecastContainer);
         }
-        
+
+        function getPressureInfo(pressure) {
+            if (pressure < 1000) {
+                return { 
+                    label: 'Low', 
+                    class: 'pressure-low', 
+                    description: 'Low pressure often indicates stormy weather conditions.' 
+                };
+            } else if (pressure < 1013) {
+                return { 
+                    label: 'Below Normal', 
+                    class: 'pressure-low', 
+                    description: 'Below normal pressure may indicate unsettled weather.' 
+                };
+            } else if (pressure < 1020) {
+                return { 
+                    label: 'Normal', 
+                    class: 'pressure-normal', 
+                    description: 'Normal atmospheric pressure for most weather conditions.' 
+                };
+            } else if (pressure < 1030) {
+                return { 
+                    label: 'High', 
+                    class: 'pressure-high', 
+                    description: 'High pressure usually brings clear, stable weather.' 
+                };
+            } else {
+                return { 
+                    label: 'Very High', 
+                    class: 'pressure-very-high', 
+                    description: 'Very high pressure indicates very stable, clear weather.' 
+                };
+            }
+        }
+
+        function showLoading() {
+            const container = document.getElementById('pressureContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading air pressure data...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const container = document.getElementById('pressureContainer');
+            container.innerHTML = `
+                <div class="error-message">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    ${message}
+                </div>
+            `;
+        }
+
         // Allow Enter key to search
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                getWeather();
+                getAirPressure();
             }
         });
     </script>

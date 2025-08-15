@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Air Quality Forecast</title>
+    <title>Humidity Forecast</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.x.x/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -79,6 +79,21 @@
             transform: scale(1.05);
         }
 
+        [data-theme="dark"] .humidity-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--bg-secondary));
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .humidity-info {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .forecast-item {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+            border: 1px solid var(--border-color);
+        }
+
         .search-box {
             text-align: center;
             margin: 2rem auto;
@@ -129,13 +144,13 @@
             box-shadow: 0 4px 15px rgba(32, 178, 170, 0.4);
         }
 
-        .air-quality-container {
+        .humidity-container {
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
 
-        .air-quality-card {
+        .humidity-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 15px;
@@ -145,7 +160,7 @@
             transition: all 0.3s ease;
         }
 
-        .air-quality-card:hover {
+        .humidity-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
@@ -167,19 +182,19 @@
             font-size: 1rem;
         }
 
-        .aqi-display {
+        .humidity-display {
             text-align: center;
             margin: 20px 0;
         }
 
-        .aqi-number {
+        .humidity-number {
             font-size: 4rem;
             font-weight: bold;
             margin: 0;
-            color: var(--text-primary);
+            color: var(--accent-color);
         }
 
-        .aqi-label {
+        .humidity-label {
             font-size: 1.1rem;
             margin: 10px 0;
             padding: 6px 16px;
@@ -187,11 +202,10 @@
             display: inline-block;
         }
 
-        .aqi-good { background: #4CAF50; color: white; }
-        .aqi-moderate { background: #FF9800; color: white; }
-        .aqi-unhealthy { background: #F44336; color: white; }
-        .aqi-very-unhealthy { background: #9C27B0; color: white; }
-        .aqi-hazardous { background: #7B1FA2; color: white; }
+        .humidity-low { background: #4CAF50; color: white; }
+        .humidity-moderate { background: #FF9800; color: white; }
+        .humidity-high { background: #2196F3; color: white; }
+        .humidity-very-high { background: #9C27B0; color: white; }
 
         .metrics-grid {
             display: grid;
@@ -226,6 +240,45 @@
             font-size: 0.9rem;
         }
 
+        .forecast-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .forecast-item {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .forecast-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .forecast-date {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .forecast-humidity {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         .loading {
             text-align: center;
             margin: 2rem auto;
@@ -243,6 +296,21 @@
             text-align: center;
         }
 
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .search-box {
                 flex-direction: column;
@@ -256,6 +324,10 @@
             
             .metrics-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .forecast-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
         }
     </style>
@@ -284,15 +356,15 @@
                         <a class="nav-link precipitation" aria-current="page" href="Precipitation.html">Precipitation</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link air_quality active" aria-current="page" href="Air_quality.html">Air Quality</a>
+                        <a class="nav-link air_quality" aria-current="page" href="Air_quality.html">Air Quality</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             More Forecasts
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="humidity.html">Humidity</a></li>
+                            <li><a class="dropdown-item active" href="humidity.html">Humidity</a></li>
                             <li><a class="dropdown-item" href="#">Pollution Level</a></li>
                             <li><a class="dropdown-item" href="Airpressure.html">Air Pressure</a></li>
                             <li>
@@ -313,18 +385,18 @@
 
     <div class="container">
         <div class="text-center mt-4">
-            <h2>Check Air Quality</h2>
-            <p class="text-muted">Enter a city name to get real-time air quality information</p>
+            <h2>Check Humidity Forecast</h2>
+            <p class="text-muted">Enter a city name to get real-time humidity information and forecast</p>
         </div>
         <div class="search-box">
             <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
-            <button class="search-btn" onclick="getAirQuality()">
-                <i class="bi bi-search me-2"></i>Get Air Quality
+            <button class="search-btn" onclick="getHumidity()">
+                <i class="bi bi-droplet-fill me-2"></i>Get Humidity
             </button>
         </div>
 
-        <div class="air-quality-container" id="airQualityContainer">
-            <!-- Air quality content will be displayed here -->
+        <div class="humidity-container" id="humidityContainer">
+            <!-- Humidity content will be displayed here -->
         </div>
     </div>
 
@@ -333,17 +405,20 @@
         crossorigin="anonymous"></script>
     
     <script>
-        // Theme management (aligned with forecast.html)
+        // Theme management (aligned with bigmain.html)
         let currentTheme = localStorage.getItem('theme') || 'light';
+        
         function toggleTheme() {
             currentTheme = currentTheme === 'light' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', currentTheme);
             localStorage.setItem('theme', currentTheme);
             updateThemeButton();
         }
+        
         function updateThemeButton() {
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
+            
             if (currentTheme === 'dark') {
                 themeIcon.className = 'bi bi-sun-fill';
                 themeText.textContent = 'Light Mode';
@@ -352,6 +427,8 @@
                 themeText.textContent = 'Dark Mode';
             }
         }
+        
+        // Initialize theme
         document.documentElement.setAttribute('data-theme', currentTheme);
         updateThemeButton();
 
@@ -359,121 +436,164 @@
         const API_KEY = '1319874b1c79918c079cd351d58e15bf'; // Replace with your actual API key
         const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-        function getAirQuality() {
+        async function getHumidity() {
             const cityInput = document.getElementById('cityInput');
-            const container = document.getElementById('airQualityContainer');
+            const city = cityInput.value.trim();
             
-            if (cityInput.value.trim() === '') {
+            if (!city) {
                 showError('Please enter a city name');
                 return;
             }
             
             showLoading();
             
-            // First get coordinates for the city
-            fetch(`${BASE_URL}/weather?q=${encodeURIComponent(cityInput.value)}&appid=${API_KEY}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.cod === '404') {
-                        showError('City not found. Please check the spelling and try again.');
-                        return;
-                    }
-                    
-                    const { lat, lon } = data.coord;
-                    return fetch(`${BASE_URL}/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
-                })
-                .then(response => response.json())
-                .then(airData => {
-                    if (airData && airData.list && airData.list[0]) {
-                        displayAirQuality(cityInput.value, airData.list[0]);
-                    } else {
-                        showError('Unable to fetch air quality data for this location.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showError('Failed to fetch air quality data. Please try again later.');
-                });
+            try {
+                // Get current weather data
+                const response = await fetch(`${BASE_URL}/weather?q=${city}&appid=${API_KEY}&units=metric`);
+                
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+                
+                const data = await response.json();
+                displayHumidity(data);
+                
+                // Get 5-day forecast for humidity
+                const forecastResponse = await fetch(`${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=metric`);
+                if (forecastResponse.ok) {
+                    const forecastData = await forecastResponse.json();
+                    displayHumidityForecast(forecastData);
+                }
+                
+            } catch (error) {
+                showError(error.message);
+            }
         }
 
-        function displayAirQuality(cityName, airData) {
-            const container = document.getElementById('airQualityContainer');
-            const aqi = airData.main.aqi;
-            const components = airData.components;
-            const aqiInfo = getAQIInfo(aqi);
+        function displayHumidity(data) {
+            const container = document.getElementById('humidityContainer');
+            const main = data.main;
+            const weather = data.weather[0];
+            const humidity = main.humidity;
+            const humidityInfo = getHumidityInfo(humidity);
             
             container.innerHTML = `
-                <div class="air-quality-card">
+                <div class="humidity-card">
                     <div class="city-info">
-                        <div class="city-name">${cityName}</div>
-                        <div class="city-country">Air Quality Index</div>
+                        <div class="city-name">${data.name}, ${data.sys.country}</div>
+                        <div class="city-country">Current Humidity Level</div>
                     </div>
                     
-                    <div class="aqi-display">
-                        <div class="aqi-number">${aqi}</div>
-                        <span class="aqi-label ${aqiInfo.class}">${aqiInfo.label}</span>
-                        <p class="mt-3">${aqiInfo.description}</p>
+                    <div class="humidity-display">
+                        <div class="humidity-number">${humidity}%</div>
+                        <span class="humidity-label ${humidityInfo.class}">${humidityInfo.label}</span>
+                        <p class="mt-3">${humidityInfo.description}</p>
                     </div>
                     
                     <div class="metrics-grid">
                         <div class="metric-card">
-                            <div class="metric-value">${components.pm2_5}</div>
-                            <div class="metric-label">PM2.5 (μg/m³)</div>
+                            <div class="metric-value">${Math.round(main.temp)}°C</div>
+                            <div class="metric-label">Temperature</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${components.pm10}</div>
-                            <div class="metric-label">PM10 (μg/m³)</div>
+                            <div class="metric-value">${Math.round(main.feels_like)}°C</div>
+                            <div class="metric-label">Feels Like</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${components.no2}</div>
-                            <div class="metric-label">NO₂ (μg/m³)</div>
+                            <div class="metric-value">${main.pressure} hPa</div>
+                            <div class="metric-label">Pressure</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${components.so2}</div>
-                            <div class="metric-label">SO₂ (μg/m³)</div>
+                            <div class="metric-value">${data.wind.speed} m/s</div>
+                            <div class="metric-label">Wind Speed</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${components.o3}</div>
-                            <div class="metric-label">O₃ (μg/m³)</div>
+                            <div class="metric-value">${weather.description}</div>
+                            <div class="metric-label">Weather</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">${components.co}</div>
-                            <div class="metric-label">CO (μg/m³)</div>
+                            <div class="metric-value">${data.visibility / 1000} km</div>
+                            <div class="metric-label">Visibility</div>
                         </div>
-                    </div>
-                    
-                    <div class="text-center mt-4">
-                        <small class="text-muted">Data provided by OpenWeatherMap API</small>
                     </div>
                 </div>
             `;
         }
 
-        function getAQIInfo(aqi) {
-            const aqiRanges = {
-                1: { label: 'Good', class: 'aqi-good', description: 'Air quality is satisfactory, and air pollution poses little or no risk.' },
-                2: { label: 'Fair', class: 'aqi-moderate', description: 'Air quality is acceptable. However, there may be a risk for some people.' },
-                3: { label: 'Moderate', class: 'aqi-moderate', description: 'Some members of sensitive groups may experience health effects.' },
-                4: { label: 'Poor', class: 'aqi-unhealthy', description: 'Some members of the general public may experience health effects.' },
-                5: { label: 'Very Poor', class: 'aqi-very-unhealthy', description: 'Health alert: The risk of health effects is increased for everyone.' }
-            };
-            return aqiRanges[aqi] || { label: 'Unknown', class: '', description: 'Air quality data unavailable.' };
+        function displayHumidityForecast(data) {
+            const container = document.getElementById('humidityContainer');
+            const forecastContainer = document.createElement('div');
+            forecastContainer.className = 'humidity-card';
+            
+            // Get daily forecasts (every 24 hours)
+            const dailyForecasts = data.list.filter((item, index) => index % 8 === 0).slice(0, 4);
+            
+            let forecastHTML = '<h3 class="text-center mb-3">4 Day Humidity Forecast</h3><div class="forecast-container">';
+            
+            dailyForecasts.forEach(forecast => {
+                const date = new Date(forecast.dt * 1000);
+                const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const humidity = forecast.main.humidity;
+                const temp = Math.round(forecast.main.temp);
+                const description = forecast.weather[0].description;
+                const humidityInfo = getHumidityInfo(humidity);
+                
+                forecastHTML += `
+                    <div class="forecast-item">
+                        <div class="forecast-date">${day}</div>
+                        <div class="forecast-humidity">${humidity}%</div>
+                        <div class="forecast-desc">${humidityInfo.label}</div>
+                        <div class="forecast-desc">${temp}°C</div>
+                        <div class="forecast-desc">${description}</div>
+                    </div>
+                `;
+            });
+            
+            forecastHTML += '</div>';
+            forecastContainer.innerHTML = forecastHTML;
+            container.appendChild(forecastContainer);
+        }
+
+        function getHumidityInfo(humidity) {
+            if (humidity < 30) {
+                return { 
+                    label: 'Low', 
+                    class: 'humidity-low', 
+                    description: 'Low humidity can cause dry skin and respiratory discomfort.' 
+                };
+            } else if (humidity < 50) {
+                return { 
+                    label: 'Moderate', 
+                    class: 'humidity-moderate', 
+                    description: 'Comfortable humidity level for most people.' 
+                };
+            } else if (humidity < 70) {
+                return { 
+                    label: 'High', 
+                    class: 'humidity-high', 
+                    description: 'High humidity may feel muggy and uncomfortable.' 
+                };
+            } else {
+                return { 
+                    label: 'Very High', 
+                    class: 'humidity-very-high', 
+                    description: 'Very high humidity can be oppressive and uncomfortable.' 
+                };
+            }
         }
 
         function showLoading() {
-            const container = document.getElementById('airQualityContainer');
+            const container = document.getElementById('humidityContainer');
             container.innerHTML = `
                 <div class="loading">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-3">Fetching air quality data...</p>
+                    <div class="spinner"></div>
+                    <p>Loading humidity data...</p>
                 </div>
             `;
         }
 
         function showError(message) {
-            const container = document.getElementById('airQualityContainer');
+            const container = document.getElementById('humidityContainer');
             container.innerHTML = `
                 <div class="error-message">
                     <i class="bi bi-exclamation-triangle me-2"></i>
@@ -485,56 +605,56 @@
         // Allow Enter key to search
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                getAirQuality();
+                getHumidity();
             }
         });
 
         // Demo mode for testing (remove this when you have an API key)
         function enableDemoMode() {
-            const container = document.getElementById('airQualityContainer');
+            const container = document.getElementById('humidityContainer');
             container.innerHTML = `
-                <div class="air-quality-card">
+                <div class="humidity-card">
                     <div class="city-info">
                         <div class="city-name">Demo Mode</div>
-                        <div class="city-country">Sample Air Quality Data</div>
+                        <div class="city-country">Sample Humidity Data</div>
                     </div>
                     
-                    <div class="aqi-display">
-                        <div class="aqi-number">42</div>
-                        <span class="aqi-label aqi-good">Good</span>
-                        <p class="mt-3">Air quality is satisfactory, and air pollution poses little or no risk.</p>
+                    <div class="humidity-display">
+                        <div class="humidity-number">65%</div>
+                        <span class="humidity-label humidity-high">High</span>
+                        <p class="mt-3">High humidity may feel muggy and uncomfortable.</p>
                     </div>
                     
                     <div class="metrics-grid">
                         <div class="metric-card">
-                            <div class="metric-value">12</div>
-                            <div class="metric-label">PM2.5 (μg/m³)</div>
+                            <div class="metric-value">22°C</div>
+                            <div class="metric-label">Temperature</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">25</div>
-                            <div class="metric-label">PM10 (μg/m³)</div>
+                            <div class="metric-value">25°C</div>
+                            <div class="metric-label">Feels Like</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">18</div>
-                            <div class="metric-label">NO₂ (μg/m³)</div>
+                            <div class="metric-value">1013 hPa</div>
+                            <div class="metric-label">Pressure</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">5</div>
-                            <div class="metric-label">SO₂ (μg/m³)</div>
+                            <div class="metric-value">3.2 m/s</div>
+                            <div class="metric-label">Wind Speed</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">45</div>
-                            <div class="metric-label">O₃ (μg/m³)</div>
+                            <div class="metric-value">Cloudy</div>
+                            <div class="metric-label">Weather</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-value">320</div>
-                            <div class="metric-label">CO (μg/m³)</div>
+                            <div class="metric-value">10 km</div>
+                            <div class="metric-label">Visibility</div>
                         </div>
                     </div>
                     
                     <div class="text-center mt-4">
                         <div class="alert alert-info">
-                            <strong>Note:</strong> This is demo data. To get real air quality data, 
+                            <strong>Note:</strong> This is demo data. To get real humidity data, 
                             <a href="https://openweathermap.org/api" target="_blank">get an API key</a> and replace 'YOUR_API_KEY_HERE' in the code.
                         </div>
                     </div>
